@@ -16,6 +16,25 @@
 
 	<name>aggregator-socket</name>
 	<url>http://maven.apache.org</url>
+	<repositories>
+		<repository>
+			<id>nexus.code.bigeon.net</id>
+			<name>Repositories Of Bigeon.net</name>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<url>https://nexus.code.bigeon.net/repository/ebigeon-public/</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
