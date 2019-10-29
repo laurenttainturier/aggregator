@@ -47,4 +47,53 @@
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>1.17</version>
+					<executions>
+						<execution>
+							<id>check-license</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>check-file-header</goal>
+							</goals>
+							<configuration>
+								<licenseResolver>${project.baseUri}/src/license</licenseResolver>
+								<properties>
+									<owner>E. Bigeon</owner>
+									<email>emmanuel@bigeon.fr</email>
+								</properties>
+							</configuration>
+						</execution>
+						<execution>
+							<id>license-report</id>
+							<phase>pre-site</phase>
+							<goals>
+								<goal>add-third-party</goal>
+								<goal>download-licenses</goal>
+							</goals>
+							<configuration>
+								<licenseResolver>${project.baseUri}/src/license</licenseResolver>
+								<properties>
+									<owner>E. Bigeon</owner>
+									<email>emmanuel@bigeon.fr</email>
+								</properties>
+							</configuration>
+						</execution>
+					</executions>
+					<configuration>
+						<licenseResolver>${project.baseUri}/src/license</licenseResolver>
+						<properties>
+							<owner>E. Bigeon</owner>
+							<email>emmanuel@bigeon.fr</email>
+						</properties>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 </project>
