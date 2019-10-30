@@ -13,7 +13,10 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.net.ServerSocketFactory;
 
@@ -25,15 +28,33 @@ import net.bigeon.mcdas.aggregator.AggregatorType;
  * @author Emmanuel Bigeon */
 public class AdministrationServer implements Runnable {
 
-    private static final char[] LIST    = { 'l', 'i', 's', 't' };
-    private static final char[] STOP    = { 's', 't', 'o', 'p' };
-    private static final char[] STAR    = { 's', 't', 'a', 'r' };
-    private boolean             running = true;
-    private final AggregatorManager   admin;
+    private static final char[]     LIST    = { 'l', 'i', 's', 't' };
+    private static final char[]     STOP    = { 's', 't', 'o', 'p' };
+    private static final char[]     STAR    = { 's', 't', 'a', 'r' };
+    private static final Logger     LOGGER  = Logger
+            .getLogger(AdministrationServer.class.getName());
+    private boolean                 running = true;
+    private final AggregatorManager admin;
+    private final InetAddress       addr;
+    private final int               port;
 
     public AdministrationServer(AggregatorManager admin) {
         super();
         this.admin = admin;
+        port = 3031;
+        addr = InetAddress.getLoopbackAddress();
+    }
+
+    /** Create the server with parameters
+     *
+     * @param admin the administration object
+     * @param addr the connection address
+     * @param port the connection port */
+    public AdministrationServer(AggregatorManager admin, InetAddress addr, int port) {
+        super();
+        this.admin = admin;
+        this.addr = addr;
+        this.port = port;
     }
 
     /** Handle new connections. */
@@ -44,13 +65,14 @@ public class AdministrationServer implements Runnable {
                 OutputStreamWriter osw = new OutputStreamWriter(socket.getOutputStream(),
                         StandardCharsets.UTF_8)) {
             char[] cbuf = new char[4];
-            if (cbuf == LIST) {
+            isr.read(cbuf);
+            if (Arrays.equals(cbuf, LIST)) {
                 handleList(osw);
                 return;
-            } else if (cbuf == STOP && isr.read() == ' ') {
+            } else if (Arrays.equals(cbuf, STOP) && isr.read() == ' ') {
                 handleStop(isr, osw);
                 return;
-            } else if (cbuf == STAR && isr.read() == 't') {
+            } else if (Arrays.equals(cbuf, STAR) && isr.read() == 't') {
                 if (isr.read() == ' ') {
                     handleStart(isr, osw);
                     return;
@@ -86,7 +108,14 @@ public class AdministrationServer implements Runnable {
             return;
         }
         String type = readPart(isr);
-        AggregatorType aggType = AggregatorType.valueOf(type.toUpperCase(Locale.ENGLISH));
+
+        AggregatorType aggType;
+        try {
+            aggType = AggregatorType.valueOf(type.toUpperCase(Locale.ENGLISH));
+        } catch (IllegalArgumentException e1) {
+            LOGGER.log(Level.CONFIG, "Invalid aggregation type", e1);
+            aggType = null;
+        }
         if (aggType == null) {
             osw.append('3');
             return;
@@ -105,6 +134,7 @@ public class AdministrationServer implements Runnable {
         }
         String node = readPart(isr);
         admin.add(id, aggType, node, period);
+        osw.append('0');
     }
 
     private void handleStop(InputStreamReader isr, OutputStreamWriter osw)
@@ -134,7 +164,7 @@ public class AdministrationServer implements Runnable {
                     continue;
                 }
             }
-            id.append(c);
+            id.append((char) c);
         }
         return id.toString();
     }
@@ -144,8 +174,7 @@ public class AdministrationServer implements Runnable {
     @Override
     public void run() {
         ServerSocketFactory factory = ServerSocketFactory.getDefault();
-        try (ServerSocket server = factory.createServerSocket(1, 3031,
-                InetAddress.getLocalHost())) {
+        try (ServerSocket server = factory.createServerSocket(port, 1, addr)) {
             while (isRunning()) {
                 handleConnection(server);
             }
