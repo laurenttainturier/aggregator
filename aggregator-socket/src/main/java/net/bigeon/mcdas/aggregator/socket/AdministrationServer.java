@@ -23,20 +23,22 @@ import javax.net.ServerSocketFactory;
 import net.bigeon.mcdas.admin.AggregatorManager;
 import net.bigeon.mcdas.aggregator.AggregatorType;
 
-/** Implementation of a server for the application
+/**
+ * Implementation of a server for the application
  *
- * @author Emmanuel Bigeon */
+ * @author Emmanuel Bigeon
+ */
 public class AdministrationServer implements Runnable {
 
-    private static final char[]     LIST    = { 'l', 'i', 's', 't' };
-    private static final char[]     STOP    = { 's', 't', 'o', 'p' };
-    private static final char[]     STAR    = { 's', 't', 'a', 'r' };
-    private static final Logger     LOGGER  = Logger
+    private static final char[] LIST = {'l', 'i', 's', 't'};
+    private static final char[] STOP = {'s', 't', 'o', 'p'};
+    private static final char[] STAR = {'s', 't', 'a', 'r'};
+    private static final Logger LOGGER = Logger
             .getLogger(AdministrationServer.class.getName());
-    private boolean                 running = true;
+    private boolean running = true;
     private final AggregatorManager admin;
-    private final InetAddress       addr;
-    private final int               port;
+    private final InetAddress addr;
+    private final int port;
 
     public AdministrationServer(AggregatorManager admin) {
         super();
@@ -45,11 +47,13 @@ public class AdministrationServer implements Runnable {
         addr = InetAddress.getLoopbackAddress();
     }
 
-    /** Create the server with parameters
+    /**
+     * Create the server with parameters
      *
      * @param admin the administration object
-     * @param addr the connection address
-     * @param port the connection port */
+     * @param addr  the connection address
+     * @param port  the connection port
+     */
     public AdministrationServer(AggregatorManager admin, InetAddress addr, int port) {
         super();
         this.admin = admin;
@@ -57,13 +61,15 @@ public class AdministrationServer implements Runnable {
         this.port = port;
     }
 
-    /** Handle new connections. */
-    private void handleConnection(ServerSocket server) {
+    /**
+     * Handle new connections.
+     */
+    public void handleConnection(ServerSocket server) {
         try (Socket socket = server.accept();
-                InputStream is = socket.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                OutputStreamWriter osw = new OutputStreamWriter(socket.getOutputStream(),
-                        StandardCharsets.UTF_8)) {
+             InputStream is = socket.getInputStream();
+             InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+             OutputStreamWriter osw = new OutputStreamWriter(socket.getOutputStream(),
+                     StandardCharsets.UTF_8)) {
             char[] cbuf = new char[4];
             isr.read(cbuf);
             if (Arrays.equals(cbuf, LIST)) {
@@ -100,7 +106,7 @@ public class AdministrationServer implements Runnable {
         osw.append("}}");
     }
 
-    private void handleStart(InputStreamReader isr, OutputStreamWriter osw)
+    public void handleStart(InputStreamReader isr, OutputStreamWriter osw)
             throws IOException {
         String id = readPart(isr);
         if (admin.list().contains(id)) {
@@ -153,18 +159,24 @@ public class AdministrationServer implements Runnable {
         return running;
     }
 
-    private String readPart(InputStreamReader isr) throws IOException {
+    private String readPart(InputStreamReader isr) {
         StringBuilder id = new StringBuilder();
         int c;
-        while ((c = isr.read()) > 0) {
-            if (Character.isWhitespace(c)) {
-                if (id.length() > 0) {
-                    break;
-                } else {
-                    continue;
+        try {
+            while (true) {
+                if (!((c = isr.read()) > 0)) break;
+                if (Character.isWhitespace(c)) {
+                    if (id.length() > 0) {
+                        break;
+                    } else {
+                        continue;
+                    }
                 }
+                id.append((char) c);
             }
-            id.append((char) c);
+        } catch (IOException e) {
+            System.out.println("what's going on?");
+            e.printStackTrace();
         }
         return id.toString();
     }
