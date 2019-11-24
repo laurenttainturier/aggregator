@@ -9,13 +9,13 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'cd aggregator; mvn clean install'
-                sh 'cd aggregator-socket; mvn clean verify exec:java'
+                sh 'cd aggregator-socket; mvn clean verify'
             }
         }
         stage('Test') { 
             steps {
-                sh 'cd aggregator;mvn test'
-		sh 'cd aggregator-socket;mvn test'
+                sh 'cd aggregator; mvn test' 
+                sh 'cd aggregator-socket; mvn test' 
             }
             post {
                 always {
