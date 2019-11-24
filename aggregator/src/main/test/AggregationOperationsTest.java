@@ -22,6 +22,14 @@ public class AggregationOperationsTest {
     public void operationInit() {
         Supplier<Function<DataPoint, Double>> supplier = AggregationOperations::maxAggregator;
         operation = supplier.get();
+        Supplier<Function<DataPoint, Double>> supplierSVD = AggregationOperations::SDevAggregator;
+        operationSVD = supplierSVD.get();
+        Supplier<Function<DataPoint, Double>> supplierSum = AggregationOperations::sumAggregator
+        operationSum = supplierSum.get();
+        Supplier<Function<DataPoint, Double>> supplierMin = AggregationOperations::minAggregator
+        operationMin = supplierMin.get();
+        Supplier<Function<DataPoint, Double>> supplierMean = AggregationOperations::meanAggregator
+        operationMean = supplierMean.get();
     }
 
     @Test
@@ -51,5 +59,47 @@ public class AggregationOperationsTest {
         DataPoint pt = new DataPoint(LocalDateTime.now(), 0, 1);
 
         assertEquals((Double) Double.POSITIVE_INFINITY, operation.apply(pt));
+    }
+
+    @Test
+    public void SVDAggregationTest() {
+        DataPoint pt1 = new DataPoint(LocalDateTime.now(), 1, 2);
+        DataPoint pt2 = new DataPoint(LocalDateTime.now(), 1, 4);
+
+        assertEquals((Double) 0.0, operationMean.apply(pt1));
+        assertEquals((Double) 1.0, operationMean.apply(pt2));
+
+        /*
+        mean        2   3
+        squaredSum  4   20
+        value       0   1
+        */
+    }
+
+    @Test
+    public void SumAggregationTest1() {
+        DataPoint pt1 = new DataPoint(LocalDateTime.now(), 1, 2);
+        DataPoint pt2 = new DataPoint(LocalDateTime.now(), 1, 1);
+
+        assertEquals((Double) 2.0, operationSum.apply(pt1));
+        assertEquals((Double) 3.0, operationSUM.apply(pt2));
+    }
+
+    @Test
+    public void MinAggregationTest1() {
+        DataPoint pt1 = new DataPoint(LocalDateTime.now(), 1, 2);
+        DataPoint pt2 = new DataPoint(LocalDateTime.now(), 1, 1);
+
+        assertEquals((Double) 2.0, operationMin.apply(pt1));
+        assertEquals((Double) 1.0, operationMin.apply(pt2));
+    }
+
+    @Test
+    public void MeanAggregationTest1() {
+        DataPoint pt1 = new DataPoint(LocalDateTime.now(), 1, 2);
+        DataPoint pt2 = new DataPoint(LocalDateTime.now(), 1, 4);
+
+        assertEquals((Double) 2.0, operationMean.apply(pt1));
+        assertEquals((Double) 3.0, operationMean.apply(pt2));
     }
 }
