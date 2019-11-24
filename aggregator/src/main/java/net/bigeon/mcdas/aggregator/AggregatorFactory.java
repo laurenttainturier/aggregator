@@ -72,20 +72,24 @@ public class AggregatorFactory {
             cache = caches.get(dTopic);
         }
         switch (type) {
-        case MEAN:
-            return new FixedWindowAggregator(cache, periods,
+            case SDEV:
+                return new FixedWindowAggregator(cache, periods,
+                        AggregationOperations::SDevAggregator);
+            case MEAN:
+                return new FixedWindowAggregator(cache, periods,
                     AggregationOperations::meanAggregator);
-        case MAX:
-            return new FixedWindowAggregator(cache, periods,
-                    AggregationOperations::minAggregator);
-        case MIN:
-            return new FixedWindowAggregator(cache, periods,
-                    AggregationOperations::maxAggregator);
-        case SUM:
-            return new FixedWindowAggregator(cache, periods,
-                    AggregationOperations::sumAggregator);
-        default:
-            break;
+            case MAX:
+                return new FixedWindowAggregator(cache, periods,
+                        AggregationOperations::minAggregator);
+            case MIN:
+                return new FixedWindowAggregator(cache, periods,
+                        AggregationOperations::maxAggregator);
+            case SUM:
+                return new FixedWindowAggregator(cache, periods,
+                        AggregationOperations::sumAggregator);
+
+            default:
+                break;
         }
         // TODO
         return null;

@@ -100,4 +100,23 @@ public class AggregationOperations {
             }
         };
     }
+
+    /** @return a function that gets the standard deviation of the values it is called with */
+    public static Function<DataPoint, Double> SDevAggregator() {
+            return new Function<DataPoint, Double>() {
+                double value = 0.;
+                int    card  = 0;
+                double mean = 0.;
+                double squaredSum = 0.;
+
+
+                @Override
+                public Double apply(DataPoint t) {
+                    mean = (mean * card + t.value / t.duration) / ++card;
+                    squaredSum += t.value * t.value;
+                    value = Math.sqrt((squaredSum / card) - (mean * mean));
+                    return value;
+                }
+            };
+    }
 }

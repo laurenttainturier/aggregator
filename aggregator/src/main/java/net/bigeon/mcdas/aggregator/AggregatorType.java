@@ -45,5 +45,7 @@ public enum AggregatorType {
     /** Aggretator for the smallest value on aggregation period. */
     MIN,
     /** Aggretator for the sum of values on aggregation period. */
-    SUM;
+    SUM,
+    /** Aggregator for the standard deviation of values on aggregation period. */
+    SDEV;
 }
