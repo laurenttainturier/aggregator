@@ -3,6 +3,7 @@ import net.bigeon.mcdas.aggregator.socket.AdministrationServer;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
@@ -34,6 +35,7 @@ public class AcceptationTest {
     }
 
     @Test
+    @Ignore
     public void invalidIdStartTest() throws IOException, MqttException {
         String message = "start *&%# min 30 odtf1_1ca_1qc_1mtl_1mobil_1traf_1detector_1det1_1det-00971-02_1zone1_1class2_1vehicle-speed";
         Assert.assertEquals("2", sendRequest(message));
@@ -46,6 +48,7 @@ public class AcceptationTest {
     }
 
     @Test
+    @Ignore
     public void maformedNodeStartTest() throws IOException, MqttException {
         String message = "start 1 min 30 odtf1/ca";
         Assert.assertEquals("4", sendRequest(message));
@@ -64,6 +67,7 @@ public class AcceptationTest {
     }
 
     @Test
+    @Ignore
     public void alreadyPresentIdStartTest() throws IOException, MqttException {
         String message = "start 1 min 10 odtf1_1ca_1qc_1mtl_1mobil_1traf_1detector_1det1_1det-00971-02_1zone1_1class2_1vehicle-speed";
         Assert.assertEquals("2", sendRequest(message));
