@@ -61,7 +61,6 @@ public class AcceptationTest {
     }
 
     @Test
-    @Ignore
     public void negativeDurationStartTest() throws IOException, MqttException {
         String message = "start 1 min -1 odtf1_1ca_1qc_1mtl_1mobil_1traf_1detector_1det1_1det-00971-02_1zone1_1class2_1vehicle-speed";
         Assert.assertEquals("5", sendRequest(message));
