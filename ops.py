@@ -13,6 +13,7 @@ if __name__ == "__main__":
     with open('telemetry.json') as telemetry:
         data = json.load(telemetry)
 
+
     content, *topics = sys.argv[1:]
 
     if content == "update":
@@ -79,7 +80,10 @@ if __name__ == "__main__":
 
         with open('telemetry.json', 'w') as telemetry:
             json.dump(data, telemetry)
-        
+
+    elif content == "list" :
+        print("List of currently availiable aggregators ('id': value) : ")
+        print(data)
     else:
         print('Invalid specified command')
         sys.exit(-1)
