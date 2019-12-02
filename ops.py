@@ -24,33 +24,30 @@ if __name__ == "__main__":
         key_t = 0
         val_t = 0
 
-        total = 0
+        total = 0 #number of all launched aggregators
         for key in enumerate(data.items()):
             total += int(key[1][1])
 
         for i,key in enumerate(data.items()):
-            if i == 0: #le premier aggregateur
+            if i == 0: #first aggregator
                 if key[1] > 0:
                     lower = int(0.8*int(key[0]))
                     if(lower >= 1):
                         new_data[str(lower)] = 0
-            elif i == (len(data)-1): #le dernier aggregateur
+            elif i == (len(data)-1): #last aggregator
                 if key[1] > 0 :
                     upper = int(1.2*int(key[0]))
                     new_data[str(upper)] = 0
-            else:   #les autres
+            else:   #others
                 if int(key[1]) / total >= 0.1 and val_t > 0:
                     new_data[str(int(((int(key[0])+key_t)/2)))] = 0
 
-            #Les valeurs du précédent aggregateur
+            #previous aggregators values
             key_t = int(key[0])
             val_t = key[1]
 
-        #print(new_data)
         with open('telemetry.json', 'w') as telemetry:
             json.dump(new_data, telemetry)
-
-
 
         aggreg_to_be_shutdown = set(data) - set(new_data)
         aggreg_to_be_start = set(new_data) - set(data)
@@ -87,8 +84,3 @@ if __name__ == "__main__":
     else:
         print('Invalid specified command')
         sys.exit(-1)
-
-
-
-    #print(data)
-    

@@ -9,3 +9,9 @@ target/
 # mosquitto
 .lck
 phao*/
+
+#reste
+aggregator-test-starter-0.0.2-SNAPSHOT-jar-with-dependencies.jar
+installed.txt
+README.md.backup
+telemetry_backup.json
