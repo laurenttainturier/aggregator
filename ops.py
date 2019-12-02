@@ -20,35 +20,52 @@ if __name__ == "__main__":
             key: val
             for key, val in data.items() if val > 0
         }
-        new_data[25] = 4
         key_t = 0
         val_t = 0
+
+        total = 0
+        for key in enumerate(data.items()):
+            total += int(key[1][1])
+
         for i,key in enumerate(data.items()):
-            if i == 0:
-                if key[1] > 0 :
+            if i == 0: #le premier aggregateur
+                if key[1] > 0:
                     lower = int(0.8*int(key[0]))
                     if(lower >= 1):
-                        new_data[lower] = 0
-            elif i == (len(data)-1):
+                        new_data[str(lower)] = 0
+            elif i == (len(data)-1): #le dernier aggregateur
                 if key[1] > 0 :
                     upper = int(1.2*int(key[0]))
-                    new_data[upper] = 0
-            else:   
-                if key[1] > 0 and val_t > 0:
-                    new_data[int(((int(key[0])+key_t)/2))] = 0
+                    new_data[str(upper)] = 0
+            else:   #les autres
+                if int(key[1]) / total >= 0.1 and val_t > 0:
+                    new_data[str(int(((int(key[0])+key_t)/2)))] = 0
+
+            #Les valeurs du précédent aggregateur
             key_t = int(key[0])
             val_t = key[1]
-        print(new_data)
+
+        #print(new_data)
+        with open('telemetry.json', 'w') as telemetry:
+            json.dump(new_data, telemetry)
+
+
+
         aggreg_to_be_shutdown = set(data) - set(new_data)
         aggreg_to_be_start = set(new_data) - set(data)
 
+        print("aggregators to be shutdown : ")
         for aggreg in aggreg_to_be_shutdown:
             sbp.run(f"echo \"java -jar {JAR} stop {aggreg}\"", shell=True)
 
+        print("aggregators to be start : ")
         for aggreg in aggreg_to_be_start:
             sbp.run(f"echo \"java -jar {JAR} start {aggreg} {AGGREG_TYPE} {aggreg} {NODE}\"", shell=True)
+
         
         print("Aggregator successfully updated")
+        print("New aggregators : ")
+        print(new_data)
         
     elif content in ["subscribe", "unsubscribe"]:
         add = 1 if content == "subscribe" else -1
@@ -59,13 +76,15 @@ if __name__ == "__main__":
                 print(f"successfully {content} to topic: {topic}")
             else:
                 print(f"The topic {topic} doesn't exist!")
+
+        with open('telemetry.json', 'w') as telemetry:
+            json.dump(data, telemetry)
         
     else:
         print('Invalid specified command')
         sys.exit(-1)
 
-    with open('telemetry.json', 'w') as telemetry:
-        json.dump(data, telemetry)
 
-    print(data)
+
+    #print(data)
     
