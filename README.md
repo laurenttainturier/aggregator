@@ -9,6 +9,6 @@ The application can be configured by sending commands through sockets as express
 
 # OPS : Telemetry of client use and automatic updates
 To see a set of available aggregator, use : `python3 ops.py list  `  
-You can only start to aggregate data on already known aggregator. To do so, use : `python3 ops.py subscribe {id} {node}`  
+You can only start to aggregate data on already known aggregator. To do so, use : `python3 ops.py subscribe {id}`  
 You can stop to aggregate data on a node with : `python3 ops.py unsubscribe {id}`  
 To update the list of aggregator based on the telemetry measure : `python3 ops.py update`
