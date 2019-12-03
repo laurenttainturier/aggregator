@@ -4,11 +4,11 @@ import subprocess as sbp
 import os
 
 JAR = "aggregator-test-starter-0.0.2-SNAPSHOT-jar-with-dependencies.jar"
-NODE = "<node>"
+NODE = "worldcongress2017_1pilot_resologi_1odtf1_1ca_1qc_1mtl_1mobil_1traf_1detector_1det0_1det-00721-01_1lane2_1measure0_1car_185-per-speed"
 AGGREG_TYPE = "MEAN"
 
 # command java -jar aggregator-test-starter-0.0.2-SNAPSHOT-jar-with-dependencies.jar start 
-# "5 min 30 worldcongress2017/pilot_resologi/odtf1/ca/qc/mtl/mobil/traf/detector/det0/det-00721-01/lane2/measure0/car/85-per-speed"
+# "5 min 30 worldcongress2017_1pilot_resologi_1odtf1_1ca_1qc_1mtl_1mobil_1traf_1detector_1det0_1det-00721-01_1lane2_1measure0_1car_185-per-speed"
 if __name__ == "__main__":
     with open('telemetry.json') as telemetry:
         data = json.load(telemetry)
